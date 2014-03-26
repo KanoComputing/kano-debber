@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import sys
 import argparse
+from collections import OrderedDict
 
 
 def run_cmd(cmd):
@@ -61,7 +62,7 @@ def parse_repos():
     if not lines:
         sys.exit('error with repos file')
 
-    data = dict()
+    data = OrderedDict()
     for i, l in enumerate(lines):
         if not l:
             continue
@@ -78,11 +79,17 @@ def parse_repos():
             repo, branch = l.split()
 
             data.setdefault(section, list()).append((repo, branch))
-
     return data
 
 
-data = parse_repos()
+def uniqify_list(seq):
+    # Order preserving
+    seen = set()
+    return [x for x in seq if x not in seen and not seen.add(x)]
+
+
+# parse repos
+repos_list = parse_repos()
 
 # argument parsing
 parser = argparse.ArgumentParser()
@@ -90,11 +97,47 @@ parser.add_argument('-d', '--down', action='store_true', help='download packages
 parser.add_argument('-b', '--build', action='store_true', help='build packages')
 parser.add_argument('-i', '--install', action='store_true', help='install packages')
 parser.add_argument('-l', '--list', action='store_true', help='list packages')
-parser.add_argument('-s', '--select', help='select given packages', nargs='+')
-parser.add_argument('group', choices=['all'] + data.keys(), help='package groups', nargs='*')
+parser.add_argument('-n', '--name', help='select by name', nargs='+')
+parser.add_argument('-g', '--group', choices=['all'] + repos_list.keys(), help='select by group', nargs='+')
 args = parser.parse_args()
 
-print args
+
+if args.list:
+    print "List of repos:"
+    for group, repos in repos_list.iteritems():
+        print group
+        for r in repos:
+            print r[0], r[1]
+        print
+
+repos_selected = []
+
+# group selection
+if args.group:
+    if 'all' in args.group:
+        repos_selected = sum(repos_list.values(), [])
+    else:
+        for g in args.group:
+            for r in repos_list[g]:
+                repos_selected.append(r)
+
+# name selection
+if args.name:
+    for n in args.name:
+        for r in sum(repos_list.values(), []):
+            if n in r[0] or n in r[1]:
+                repos_selected.append(r)
+
+if not repos_selected:
+    sys.exit('No repo selected, run -h for help')
+
+# uniqify repos_selected
+repos_selected = uniqify_list(repos_selected)
+
+print "Selected repos:"
+for r in repos_selected:
+    print r[0], r[1]
+
 
 sys.exit()
 
