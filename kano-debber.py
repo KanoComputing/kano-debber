@@ -81,6 +81,10 @@ def uniqify_list(seq):
     return [x for x in seq if x not in seen and not seen.add(x)]
 
 
+def get_user():
+    return os.environ['LOGNAME']
+
+
 # parse repos
 repos_list = parse_repos()
 
@@ -103,7 +107,7 @@ if args.list:
         for r in repos:
             print r[0], r[1]
         print
-sys.exit()
+    sys.exit()
 
 repos_selected = []
 
@@ -216,8 +220,9 @@ for name, branch in repos_selected:
          if os.path.splitext(f)[1][1:] in ['build', 'changes']]
 
     if args.install:
-        os.chdir(root_dir)
         print '\nInstalling {} ...'.format(dir_str)
+        if get_user() != 'root':
+            sys.exit('Need to be root to install packages!')
 
         if not debfile:
             msg = 'You need to build before install!\n'
