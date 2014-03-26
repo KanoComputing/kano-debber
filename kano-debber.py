@@ -103,6 +103,7 @@ if args.list:
         for r in repos:
             print r[0], r[1]
         print
+sys.exit()
 
 repos_selected = []
 
