@@ -1,15 +1,15 @@
-# essential
+[base]
 kano-toolset master
 Kanux-utils kano-connect
 Kano-Profile master
 
-# tools
+[tools]
 kano-settings master
 kano-share master
 
-# apps
+[apps]
 make-snake master
-#Kano-blocks kp-new
-#kano-desktop master
-#kano-updater master
+Kano-blocks kp-new
+kano-desktop master
+kano-updater master
 #yt master

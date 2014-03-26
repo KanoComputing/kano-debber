@@ -4,6 +4,7 @@ import os
 import subprocess
 import shutil
 import sys
+import argparse
 
 
 def run_cmd(cmd):
@@ -54,14 +55,58 @@ def deletedir(directory):
     if os.path.exists(directory):
         shutil.rmtree(directory)
 
+
+def parse_repos():
+    lines = read_file_contents_as_lines('repos')
+    if not lines:
+        sys.exit('error with repos file')
+
+    data = dict()
+    for i, l in enumerate(lines):
+        if not l:
+            continue
+
+        if l[0] == '[':
+            section = l.translate(None, '[]')
+        else:
+            if l[0] == '#':
+                continue
+
+            parts = l.split()
+            if len(parts) != 2:
+                sys.exit('bad line in repos file:\n{}'.format(l))
+            repo, branch = l.split()
+
+            data.setdefault(section, list()).append((repo, branch))
+
+    return data
+
+
+data = parse_repos()
+
+# argument parsing
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--down', action='store_true', help='download packages')
+parser.add_argument('-b', '--build', action='store_true', help='build packages')
+parser.add_argument('-i', '--install', action='store_true', help='install packages')
+parser.add_argument('-l', '--list', action='store_true', help='list packages')
+parser.add_argument('-s', '--select', help='select given packages', nargs='+')
+parser.add_argument('group', choices=['all'] + data.keys(), help='package groups', nargs='*')
+args = parser.parse_args()
+
+print args
+
+sys.exit()
+
+# checking packages are present
 _, _, rc_curl = run_cmd('which curl')
 _, _, rc_debuild = run_cmd('which debuild')
 _, _, rc_gdebi = run_cmd('which gdebi')
 
-
 if rc_curl or rc_debuild or rc_gdebi:
     sys.exit('Run prepare_system.sh first')
 
+# start
 root = os.getcwd()
 token = read_file_contents('token')
 repos_all = [r for r in read_file_contents_as_lines('repos') if r and r[0] != '#']
