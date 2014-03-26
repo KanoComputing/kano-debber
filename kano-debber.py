@@ -243,7 +243,7 @@ for name, branch in repos_selected:
                 for l in o.splitlines()
                 if l.startswith(str)]
         if deps:
-            print '\tNewly installed packages: {}'.format(' '.join(deps))
+            print 'Newly installed packages: {}'.format(' '.join(deps))
 
         if rc == 0:
             print 'OK'
