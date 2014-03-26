@@ -229,12 +229,22 @@ for name, branch in repos_selected:
             msg += 'To manually install an already built package, please use `gdebi packagename`'
             sys.exit(msg)
 
-        print 'using .deb file: {}'.format(debfile)
+        if args.verbose:
+            print 'using .deb file: {}'.format(debfile)
 
         cmd = 'gdebi {} -n -q'.format(debfile_path)
         o, e, rc = run_cmd(cmd)
         if args.verbose:
             print o
+
+        # detect newly installed dependencies
+        str = 'Setting up '
+        deps = [l[len(str):].replace(' ...', '')
+                for l in o.splitlines()
+                if l.startswith(str)]
+        if deps:
+            print '\tNewly installed packages: {}'.format(' '.join(deps))
+
         if rc == 0:
             print 'OK'
         else:

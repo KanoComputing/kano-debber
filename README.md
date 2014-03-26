@@ -23,3 +23,13 @@ Download and extract the latest version
 	sudo ./prepare_system.sh
 	
 2\. 
+
+download, build and install all packages
+
+	sudo ./kano-debber.py -g all -dbi
+
+with verbose output
+
+	sudo ./kano-debber.py -g all -dbi -v
+
+
