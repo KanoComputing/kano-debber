@@ -17,17 +17,6 @@ def run_cmd(cmd):
     return stdout, stderr, returncode
 
 
-def run_print_output_error(cmd):
-    o, e, rc = run_cmd(cmd)
-    if o or e:
-        print '\ncommand: {}'.format(cmd)
-    if o:
-        print 'output:\n{}'.format(o.strip())
-    if e:
-        print '\nerror:\n{}'.format(e.strip())
-    return o, e, rc
-
-
 def read_file_contents(path):
     if os.path.exists(path):
         with open(path) as infile:
@@ -63,6 +52,7 @@ def parse_repos():
         sys.exit('error with repos file')
 
     data = OrderedDict()
+    section = ''
     for i, l in enumerate(lines):
         if not l:
             continue
@@ -73,9 +63,12 @@ def parse_repos():
             if l[0] == '#':
                 continue
 
+            if not section:
+                sys.exit('Error with repos file, needs to start with a section!')
+
             parts = l.split()
             if len(parts) != 2:
-                sys.exit('bad line in repos file:\n{}'.format(l))
+                sys.exit('Bad line in repos file:\n{}'.format(l))
             repo, branch = l.split()
 
             data.setdefault(section, list()).append((repo, branch))
@@ -97,13 +90,14 @@ parser.add_argument('-d', '--down', action='store_true', help='download packages
 parser.add_argument('-b', '--build', action='store_true', help='build packages')
 parser.add_argument('-i', '--install', action='store_true', help='install packages')
 parser.add_argument('-l', '--list', action='store_true', help='list packages')
+parser.add_argument('-v', '--verbose', action='store_true', help='verbose mode')
 parser.add_argument('-n', '--name', help='select by name', nargs='+')
 parser.add_argument('-g', '--group', choices=['all'] + repos_list.keys(), help='select by group', nargs='+')
 args = parser.parse_args()
 
 
 if args.list:
-    print "List of repos:"
+    print 'List of repos:'
     for group, repos in repos_list.iteritems():
         print group
         for r in repos:
@@ -125,7 +119,7 @@ if args.group:
 if args.name:
     for n in args.name:
         for r in sum(repos_list.values(), []):
-            if n in r[0] or n in r[1]:
+            if n.lower() in r[0].lower() or n.lower() in r[1].lower():
                 repos_selected.append(r)
 
 if not repos_selected:
@@ -134,12 +128,10 @@ if not repos_selected:
 # uniqify repos_selected
 repos_selected = uniqify_list(repos_selected)
 
-print "Selected repos:"
+print 'Selected repos:'
 for r in repos_selected:
     print r[0], r[1]
 
-
-sys.exit()
 
 # checking packages are present
 _, _, rc_curl = run_cmd('which curl')
@@ -150,84 +142,102 @@ if rc_curl or rc_debuild or rc_gdebi:
     sys.exit('Run prepare_system.sh first')
 
 # start
-root = os.getcwd()
+root_dir = os.getcwd()
 token = read_file_contents('token')
-repos_all = [r for r in read_file_contents_as_lines('repos') if r and r[0] != '#']
 github = 'https://api.github.com/repos/KanoComputing/{}/tarball/{}'
 
 
-if not 'all' in sys.argv:
-    include = None
-    for argv in sys.argv[1:]:
-        if '-select=' in argv:
-            include = argv.replace('-select=', '').split(',')
+for name, branch in repos_selected:
+    url = github.format(name, branch)
+    dir_str = '{}___{}'.format(name, branch)
+    dir_path = os.path.join(root_dir, dir_str)
+    debfile = ''
 
-    exclude = None
-    for argv in sys.argv[1:]:
-        if '-exclude=' in argv:
-            exclude = argv.replace('-exclude=', '').split(',')
-
-    repos_selected = []
-    if include:
-        for repo in repos_all:
-            for s in include:
-                if s.lower() in repo.lower():
-                    repos_selected.append(repo)
-
-    if exclude:
-        for repo in repos_selected:
-            for u in exclude:
-                if s.lower() in repo.lower():
-                    repos_selected.remove(repo)
-
-else:
-    repos_selected = repos_all
-
-for r in repos_selected:
-    print r
-
-for repo in repos_selected:
-    repo, branch = repo.split()
-    url = github.format(repo, branch)
-
-    # dir_str = '{}'.format(branch)
-    dir_str = '{}___{}'.format(repo, branch)
-    dir_path = os.path.join(root, dir_str)
-
-    if 'down' in sys.argv:
-        print "\nDownloading {} ...".format(dir_str)
+    if args.down:
+        print '\nDownloading {} ...'.format(dir_str)
 
         deletedir(dir_path)
         ensuredir(dir_path)
         os.chdir(dir_path)
 
-        cmd = 'curl -H "Authorization: token {}" -L -o tmp.tgz {}'.format(token, url)
-        run_print_output_error(cmd)
+        if not token:
+            cmd = 'curl -L -v -o tmp.tgz {url}'.format(url=url)
+        else:
+            cmd = 'curl -H "Authorization: token {token}" -L -v -o tmp.tgz {url}'.format(token=token, url=url)
+        _, e, _ = run_cmd(cmd)
+
+        if args.verbose:
+            print e
+
+        if '< Status: 302 Found' in e:
+            print 'OK'
+        else:
+            msg = 'Problem with download, possibly missing token?'
+            if not args.verbose:
+                msg += ' Use -v for detailed error'
+            sys.exit(msg)
 
         cmd = 'tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz'
         run_cmd(cmd)
 
         deletefile('tmp.tgz')
 
-    if 'build' in sys.argv:
+    if args.build:
+        print '\nBuilding {} ...'.format(dir_str)
+        if not os.path.exists(dir_path) or not os.listdir(dir_path):
+            sys.exit('You need to download first!')
+
         changelog_file = os.path.join(dir_path, 'debian/changelog')
         if not os.path.exists(changelog_file):
+            print 'No changelog, skipped!'
             continue
 
-        print "\nBuilding {} ...".format(dir_str)
-        if not os.path.exists(dir_path):
-            sys.exit("run down first for {}".format(dir_str))
-
         os.chdir(dir_path)
-        run_print_output_error('debuild -i -us -uc -b')
+        cmd = 'debuild -i -us -uc -b'
+        o, e, rc = run_cmd(cmd)
+        if args.verbose:
+            print o
+        if rc == 0:
+            print 'OK'
+        else:
+            print e
+            sys.exit('Problem with building!')
+
+        debline = [l for l in o.splitlines() if 'dpkg-deb: building package' in l][0]
+        debfile = debline.split('in `../')[1][:-2]
+        debfile_path = os.path.join(root_dir, debfile)
+        if not os.path.exists(debfile_path):
+            sys.exit('Problem with parsing build log, .deb file: {}'.format(debfile))
+
+        # cleanup .build and .changes
+        [os.remove(os.path.join(root_dir, f))
+         for f in os.listdir(root_dir)
+         if os.path.splitext(f)[1][1:] in ['build', 'changes']]
+
+    if args.install:
+        os.chdir(root_dir)
+        print '\nInstalling {} ...'.format(dir_str)
+
+        if not debfile:
+            msg = 'You need to build before install!\n'
+            msg += 'To manually install an already built package, please use `gdebi packagename`'
+            sys.exit(msg)
+
+        print 'using .deb file: {}'.format(debfile)
+
+        cmd = 'gdebi {} -n -q'.format(debfile_path)
+        o, e, rc = run_cmd(cmd)
+        if args.verbose:
+            print o
+        if rc == 0:
+            print 'OK'
+        else:
+            print e
+            sys.exit('Problem with installing!')
 
 
-paths = os.listdir(root)
-for p in paths:
-    fullpath = os.path.join(root, p)
-    ext = os.path.splitext(fullpath)[1][1:]
-    if ext == 'build' or ext == 'changes':
-        os.remove(fullpath)
+
+
 
 
 
