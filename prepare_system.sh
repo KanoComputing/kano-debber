@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # prepare package building
-apt-get -y install build-essential debhelper devscripts gdebi curl libwxbase2.8-dev libwxgtk2.8-dev wx2.8-headers python-dev python-pygame --no-install-recommends
+sudo apt-get -y install python-gtk2 python-webkit fping python build-essential debhelper devscripts gdebi curl libwxbase2.8-dev libwxgtk2.8-dev wx2.8-headers python-dev python-pygame --no-install-recommends
 
 # prepare python
 apt-get -y purge python-setuptools python-virtualenv python-pip
