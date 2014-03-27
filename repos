@@ -1,6 +1,5 @@
 [base]
 kano-toolset master
-Kanux-utils kano-connect
 Kano-Profile master
 
 [tools]
@@ -11,5 +10,5 @@ kano-share master
 make-snake master
 Kano-blocks kp-new
 kano-desktop master
-#yt master
+yt master
 kano-updater master

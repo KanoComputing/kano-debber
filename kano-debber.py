@@ -189,13 +189,20 @@ for name, branch in repos_selected:
 
     if args.build:
         print '\nBuilding {} ...'.format(dir_str)
+
+        # checking path
         if not os.path.exists(dir_path) or not os.listdir(dir_path):
             sys.exit('You need to download first!')
 
+        # checking changelog file
         changelog_file = os.path.join(dir_path, 'debian/changelog')
         if not os.path.exists(changelog_file):
             print 'No changelog, skipped!'
             continue
+
+        # checking root
+        if get_user() != 'root':
+            sys.exit('Need to be root to install packages!')
 
         os.chdir(dir_path)
         cmd = 'debuild -i -us -uc -b'
