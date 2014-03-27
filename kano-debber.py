@@ -202,7 +202,7 @@ for name, branch in repos_selected:
 
         # checking root
         if get_user() != 'root':
-            sys.exit('Need to be root to install packages!')
+            sys.exit('Need to be root to build packages!')
 
         os.chdir(dir_path)
         cmd = 'debuild -i -us -uc -b'
