@@ -3,12 +3,12 @@ kano-toolset master
 Kano-Profile master
 
 [tools]
-kano-settings master
+kano-settings kano.network
 kano-share master
 
 [apps]
 make-snake master
 Kano-blocks kp-new
-kano-desktop master
-yt master
 kano-updater master
+#kano-desktop master
+#yt master

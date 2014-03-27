@@ -157,9 +157,10 @@ for name, branch in repos_selected:
     dir_str = '{}___{}'.format(name, branch)
     dir_path = os.path.join(root_dir, dir_str)
     debfile = ''
+    print
 
     if args.down:
-        print '\nDownloading {} ...'.format(dir_str)
+        print 'Downloading {} ...'.format(dir_str)
 
         deletedir(dir_path)
         ensuredir(dir_path)
@@ -188,7 +189,7 @@ for name, branch in repos_selected:
         deletefile('tmp.tgz')
 
     if args.build:
-        print '\nBuilding {} ...'.format(dir_str)
+        print 'Building {} ...'.format(dir_str)
 
         # checking path
         if not os.path.exists(dir_path) or not os.listdir(dir_path):
@@ -197,7 +198,7 @@ for name, branch in repos_selected:
         # checking changelog file
         changelog_file = os.path.join(dir_path, 'debian/changelog')
         if not os.path.exists(changelog_file):
-            print 'No changelog, skipped!'
+            print 'No changelog, build skipped'
             continue
 
         # checking root
@@ -215,11 +216,15 @@ for name, branch in repos_selected:
             print e
             sys.exit('Problem with building!')
 
-        debline = [l for l in o.splitlines() if 'dpkg-deb: building package' in l][0]
-        debfile = debline.split('in `../')[1][:-2]
-        debfile_path = os.path.join(root_dir, debfile)
-        if not os.path.exists(debfile_path):
-            sys.exit('Problem with parsing build log, .deb file: {}'.format(debfile))
+        deblines = [l for l in o.splitlines() if 'dpkg-deb: building package' in l]
+        debfiles = []
+        for debline in deblines:
+            debfile = debline.split('in `../')[1][:-2]
+            debfile_path = os.path.join(root_dir, debfile)
+            if not os.path.exists(debfile_path):
+                sys.exit('Problem with parsing build log, .deb file: {}'.format(debfile))
+            else:
+                debfiles.append((debfile, debfile_path))
 
         # cleanup .build and .changes
         [os.remove(os.path.join(root_dir, f))
@@ -227,36 +232,41 @@ for name, branch in repos_selected:
          if os.path.splitext(f)[1][1:] in ['build', 'changes']]
 
     if args.install:
-        print '\nInstalling {} ...'.format(dir_str)
+        print 'Installing {} ...'.format(dir_str)
         if get_user() != 'root':
             sys.exit('Need to be root to install packages!')
 
-        if not debfile:
-            msg = 'You need to build before install!\n'
-            msg += 'To manually install an already built package, please use `gdebi packagename`'
-            sys.exit(msg)
+        success = True
+        for debfile, debfile_path in debfiles:
+            if not debfile:
+                msg = 'You need to build before install!\n'
+                msg += 'To manually install an already built package, please use `gdebi packagename`'
+                sys.exit(msg)
 
-        if args.verbose:
-            print 'using .deb file: {}'.format(debfile)
+            if args.verbose:
+                print 'using .deb file: {}'.format(debfile)
 
-        cmd = 'gdebi {} -n -q'.format(debfile_path)
-        o, e, rc = run_cmd(cmd)
-        if args.verbose:
-            print o
+            cmd = 'gdebi {} -n -q'.format(debfile_path)
+            o, e, rc = run_cmd(cmd)
+            if args.verbose:
+                print o
 
-        # detect newly installed dependencies
-        str = 'Setting up '
-        deps = [l[len(str):].replace(' ...', '')
-                for l in o.splitlines()
-                if l.startswith(str)]
-        if deps:
-            print 'Newly installed packages: {}'.format(' '.join(deps))
+            success = success and rc == 0
 
-        if rc == 0:
+            # detect newly installed dependencies
+            str = 'Setting up '
+            deps = [l[len(str):].replace(' ...', '')
+                    for l in o.splitlines()
+                    if l.startswith(str)]
+            if deps:
+                print 'Newly installed packages: {}'.format(' '.join(deps))
+
+        if success:
             print 'OK'
         else:
             print e
             sys.exit('Problem with installing!')
+
 
 
 

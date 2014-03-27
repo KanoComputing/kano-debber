@@ -16,13 +16,33 @@ Download and extract the latest version
 	tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz
 	rm tmp.tgz
 
-## Usage
+## Prepare system
 
-1\. If you are running `kano-debber` on your own system, you have to run the prepare script first. This is not needed on Kano-DevBox as it is already prepared.
+If you are running `kano-debber` on your own system, you have to run the prepare script first. This is not needed on Kano-DevBox as it is already prepared.
 
 	sudo ./prepare_system.sh
 	
-2\. 
+## How it works
+
+`kano-debber` reads the list of repositories from the `repos` file, and the GitHub authentication token from `token`. The token file is optional and is only needed for private repositories.
+
+The `repos` file has *repository - branch* definitions on each line, grouped by *sections* defined by `[section_name]` lines.
+
+With each repository it can do three operations:
+
+1. Download - it downloads the latest version from GitHub, using the token if specified 
+2. Build - it builds the .deb package using the Debian `debuild` command
+3. Install - it installs the previously built .deb package using the `gdebi` command
+
+`kano-debber` processes each package in the order specified in the `repos` file. If you would like to have specific packages installed before others, move them higher up in the repos file.
+
+## Usage
+
+To use it, you need to specify what repost to download/build/install and 
+
+
+ 
+
 
 download, build and install all packages
 
