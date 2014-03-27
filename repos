@@ -3,7 +3,7 @@ kano-toolset master
 Kano-Profile master
 
 [tools]
-kano-settings kano.network
+kano-settings master
 kano-share master
 
 [apps]
