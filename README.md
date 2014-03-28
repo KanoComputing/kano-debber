@@ -3,13 +3,13 @@ kano-debber
 
 Small tool for the creation of deb packages from Kano GitHub repos.
 
-Only supported on Debian Wheezy systems and on Kano-DevBox
+Only supported on Debian Wheezy systems and on Kano-Devbox
 
 ## Installation
 
 Download and extract the latest version
 
-	sudo rm -rf ~/kano-debber
+	rm -rf ~/kano-debber
 	mkdir -p ~/kano-debber
 	cd ~/kano-debber
 	curl -H "Authorization: token 06e849a65eaf62f48b1fc4eb6085a71cbbd1db89" -L -o tmp.tgz https://api.github.com/repos/KanoComputing/kano-debber/tarball/master
@@ -18,10 +18,10 @@ Download and extract the latest version
 
 ## Prepare system
 
-If you are running `kano-debber` on your own system, you have to run the prepare script first. This is not needed on Kano-DevBox as it is already prepared.
+If you are running `kano-debber` on your own system, you have to run the prepare script first. This is not needed on Kano-Devbox as it is already prepared.
 
 	sudo ./prepare_system.sh
-	
+
 ## How it works
 
 `kano-debber` reads the list of repositories from the `repos` file, and the GitHub authentication token from `token`. The token file is optional and is only needed for private repositories.
@@ -30,8 +30,8 @@ The `repos` file has *repository - branch* definitions on each line, grouped by 
 
 With each repository it can do three operations:
 
-1. Download - it downloads the latest version from GitHub, using the token if specified 
-2. Build - it builds the .deb package using the Debian `debuild` command
+1. Download - it downloads the latest version from GitHub, using the token if specified
+2. Build - it builds the .deb package using the Debian `debuild` commander
 3. Install - it installs the previously built .deb package using the `gdebi` command
 
 `kano-debber` processes each package in the order of how they are in the `repos` file. If you would like to have specific packages installed before others (dependencies), place them higher in the repos file.
@@ -58,18 +58,20 @@ If you want to select by name, use the `-n` or `--name` switch. In name selectio
 **Example**: to select package "kano-settings" and "make-snake", you can run:
 
 	./kano-debber -n sett snake
-	
+
+You can check which packages are selected by running `kano-debber` without any action (see below).
+
 ### Setting actions
 
-To download repo, set `-d` or `--down`
-To build a repo, set `-b` or `--build`
-To install a repo, set `-i` or `--install`
+- To download repo, set `-d` or `--down`
+- To build a repo, set `-b` or `--build`
+- To install a repo, set `-i` or `--install`
 
-You can combine these switches, for example to download - build - install a package, run `-dbi`.
+You can combine these switches, for example to download, build and install a package, run `-dbi`.
 
 If you don't specify any switch, `kano-debber` just lists the selected packages.
 
-**Note**: installation requires build, so to install you have to use either `-dbi` or `-bi`. If you just want to install an already built .deb, use the `gdebi` command line program.
+**Note**: installation requires build, so to install you have to use either `-bi` or `-dbi`. If you just want to install an already built .deb, use the `gdebi` command line program.
 
 ### Additional switches
 
@@ -78,7 +80,7 @@ If you don't specify any switch, `kano-debber` just lists the selected packages.
 Use `-l` or `--list` to list all packages in the repos file
 
 #### Verbose output
- 
+
 Use `-v` or `--verbose` to show the detailed log for all the processes. It'll show the download log, the build log and the install log.
 
 ## Examples
