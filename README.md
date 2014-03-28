@@ -3,7 +3,7 @@ kano-debber
 
 Small tool for the creation of deb packages from Kano GitHub repos.
 
-Only supported on Debian Wheezy systems and on Kano-Devbox
+**Note**: you are only supposed to run this on Debian based systems and in Kano-Devbox
 
 ## Installation
 
