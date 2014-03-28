@@ -97,3 +97,8 @@ Use `-v` or `--verbose` to show the detailed log for all the processes. It'll sh
 
 	sudo ./kano-debber.py -n snake -bi -v
 
+
+
+## TODO
+
+- remove token
