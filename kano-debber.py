@@ -1,53 +1,15 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
-import shutil
 import sys
 import argparse
 from collections import OrderedDict
 
-
-def run_cmd(cmd):
-    process = subprocess.Popen(cmd, shell=True,
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-    stdout, stderr = process.communicate()
-    returncode = process.returncode
-    return stdout, stderr, returncode
-
-
-def read_file_contents(path):
-    if os.path.exists(path):
-        with open(path) as infile:
-            return infile.read().strip()
-
-
-def read_file_contents_as_lines(path):
-    if os.path.exists(path):
-        with open(path) as infile:
-            content = infile.readlines()
-            lines = [line.strip() for line in content]
-            return lines
-
-
-def ensuredir(directory):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-
-def deletefile(file):
-    if os.path.exists(file):
-        os.remove(file)
-
-
-def deletedir(directory):
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
+import utils as u
 
 
 def parse_repos():
-    lines = read_file_contents_as_lines('repos')
+    lines = u.read_file_contents_as_lines('repos')
     if not lines:
         sys.exit('error with repos file')
 
@@ -73,16 +35,6 @@ def parse_repos():
 
             data.setdefault(section, list()).append((repo, branch))
     return data
-
-
-def uniqify_list(seq):
-    # Order preserving
-    seen = set()
-    return [x for x in seq if x not in seen and not seen.add(x)]
-
-
-def get_user():
-    return os.environ['LOGNAME']
 
 
 # parse repos
@@ -131,7 +83,7 @@ if not repos_selected:
     sys.exit('No repo selected, run -h for help')
 
 # uniqify repos_selected
-repos_selected = uniqify_list(repos_selected)
+repos_selected = u.uniqify_list(repos_selected)
 
 print 'Selected repos:'
 for r in repos_selected:
@@ -139,16 +91,16 @@ for r in repos_selected:
 
 
 # checking packages are present
-_, _, rc_curl = run_cmd('which curl')
-_, _, rc_debuild = run_cmd('which debuild')
-_, _, rc_gdebi = run_cmd('which gdebi')
+_, _, rc_curl = u.run_cmd('which curl')
+_, _, rc_debuild = u.run_cmd('which debuild')
+_, _, rc_gdebi = u.run_cmd('which gdebi')
 
 if rc_curl or rc_debuild or rc_gdebi:
     sys.exit('Run prepare_system.sh first')
 
 # start
 root_dir = os.getcwd()
-token = read_file_contents('token')
+token = u.read_file_contents('token')
 github = 'https://api.github.com/repos/KanoComputing/{}/tarball/{}'
 
 
@@ -162,15 +114,15 @@ for name, branch in repos_selected:
     if args.down:
         print 'Downloading {} ...'.format(dir_str)
 
-        deletedir(dir_path)
-        ensuredir(dir_path)
+        u.deletedir(dir_path)
+        u.ensuredir(dir_path)
         os.chdir(dir_path)
 
         if not token:
             cmd = 'curl -L -v -o tmp.tgz {url}'.format(url=url)
         else:
             cmd = 'curl -H "Authorization: token {token}" -L -v -o tmp.tgz {url}'.format(token=token, url=url)
-        _, e, _ = run_cmd(cmd)
+        _, e, _ = u.run_cmd(cmd)
 
         if args.verbose:
             print e
@@ -184,9 +136,9 @@ for name, branch in repos_selected:
             sys.exit(msg)
 
         cmd = 'tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz'
-        run_cmd(cmd)
+        u.run_cmd(cmd)
 
-        deletefile('tmp.tgz')
+        u.deletefile('tmp.tgz')
 
     if args.build:
         print 'Building {} ...'.format(dir_str)
@@ -202,12 +154,12 @@ for name, branch in repos_selected:
             continue
 
         # checking root
-        if get_user() != 'root':
+        if u.get_user() != 'root':
             sys.exit('Need to be root to build packages!')
 
         os.chdir(dir_path)
         cmd = 'debuild -i -us -uc -b'
-        o, e, rc = run_cmd(cmd)
+        o, e, rc = u.run_cmd(cmd)
         if args.verbose:
             print o
         if rc == 0:
@@ -233,7 +185,7 @@ for name, branch in repos_selected:
 
     if args.install:
         print 'Installing {} ...'.format(dir_str)
-        if get_user() != 'root':
+        if u.get_user() != 'root':
             sys.exit('Need to be root to install packages!')
 
         success = True
@@ -247,7 +199,7 @@ for name, branch in repos_selected:
                 print 'using .deb file: {}'.format(debfile)
 
             cmd = 'gdebi {} -n -q'.format(debfile_path)
-            o, e, rc = run_cmd(cmd)
+            o, e, rc = u.run_cmd(cmd)
             if args.verbose:
                 print o
 
