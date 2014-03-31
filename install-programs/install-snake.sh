@@ -13,4 +13,6 @@ sudo ./prepare-deb.py
 # download, build and install make snake
 sudo ./kano-debber.py -n snake -dbi
 
+read -p "Install completed, press any key to continue..."
+
 
