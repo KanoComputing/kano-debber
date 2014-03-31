@@ -207,7 +207,7 @@ for name, branch in repos_selected:
             if args.verbose:
                 print 'using .deb file: {}'.format(debfile)
 
-            cmd = 'gdebi {} -n -q'.format(debfile_path)
+            cmd = 'gdebi {} -n -q -o APT::Install-Recommends=0 -o APT::Install-Suggests=0'.format(debfile_path)
             o, e, rc = u.run_cmd(cmd)
             if args.verbose:
                 print o
