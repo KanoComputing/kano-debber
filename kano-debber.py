@@ -95,6 +95,9 @@ print 'Selected repos:'
 for r in repos_selected:
     print r[0], r[1]
 
+if not (args.down or args.build or args.install):
+    sys.exit()
+
 
 # checking packages are present
 _, _, rc_curl = u.run_cmd('which curl')

@@ -5,6 +5,7 @@ Kano-Profile master
 [tools]
 kano-settings master
 kano-share master
+kanux-utils kano-unlocker
 
 [apps]
 make-snake master
