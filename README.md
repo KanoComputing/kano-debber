@@ -20,7 +20,7 @@ Download and extract the latest version
 
 If you are running `kano-debber` on your own system, you have to run the prepare script first. This is not needed on Kano-Devbox as it is already prepared.
 
-	sudo ./prepare_system.sh
+	sudo ./prepare-system.sh
 
 ## How it works
 
