@@ -7,6 +7,7 @@ curl -H "Authorization: token 06e849a65eaf62f48b1fc4eb6085a71cbbd1db89" -L -o tm
 tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz
 rm tmp.tgz
 
+# install compiled debs from repo
 sudo ./prepare-deb.py
 
 # download, build and install make snake
