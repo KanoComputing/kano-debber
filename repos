@@ -8,8 +8,9 @@ kano-share master
 kanux-utils kano-unlocker
 
 [apps]
+kano-blocks refactoring
+make-pong refactoring
 make-snake master
-Kano-blocks kp-new
 kano-updater master
 #kano-desktop master
 #yt master
