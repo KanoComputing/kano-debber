@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Copyright (C) 2014 Kano Computing Ltd.
+# License: http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+#
+
 # prepare package building
 sudo apt-get -y --no-install-recommends install build-essential curl \
     debhelper devscripts fping gdebi libwxbase2.8-dev libwxgtk2.8-dev python \
