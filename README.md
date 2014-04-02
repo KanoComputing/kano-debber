@@ -9,7 +9,6 @@ Small tool for the creation of deb packages from Kano GitHub repos.
 
 Download and extract the latest version
 
-	rm -rf ~/kano-debber
 	mkdir -p ~/kano-debber
 	cd ~/kano-debber
 	curl -L -o tmp.tgz https://api.github.com/repos/KanoComputing/kano-debber/tarball/master
