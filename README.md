@@ -12,7 +12,7 @@ Download and extract the latest version
 	rm -rf ~/kano-debber
 	mkdir -p ~/kano-debber
 	cd ~/kano-debber
-	curl -H "Authorization: token 06e849a65eaf62f48b1fc4eb6085a71cbbd1db89" -L -o tmp.tgz https://api.github.com/repos/KanoComputing/kano-debber/tarball/master
+	curl -L -o tmp.tgz https://api.github.com/repos/KanoComputing/kano-debber/tarball/master
 	tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz
 	rm tmp.tgz
 

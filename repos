@@ -1,19 +1,2 @@
-[base]
-kano-toolset master
-Kano-Profile master
-
-[tools]
-kano-settings master
-kano-share master
-kanux-utils kano-unlocker
-
 [apps]
-kano-updater master
 make-snake master
-#yt master
-#kano-desktop master
-
-[blocks]
-kano-blocks master
-make-pong master
-make-minecraft master
