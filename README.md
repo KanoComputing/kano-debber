@@ -9,11 +9,8 @@ Small tool for the creation of deb packages from Kano GitHub repos.
 
 Download and extract the latest version
 
-	mkdir -p ~/kano-debber
-	cd ~/kano-debber
-	curl -L -o tmp.tgz https://api.github.com/repos/KanoComputing/kano-debber/tarball/master
-	tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz
-	rm tmp.tgz
+    mkdir -p ~/kano-debber && cd ~/kano-debber
+    wget -qO- https://api.github.com/repos/KanoComputing/kano-debber/tarball/master | tar --strip-components 1 -xz
 
 ## Prepare system
 
@@ -96,8 +93,3 @@ Use `-v` or `--verbose` to show the detailed log for all the processes. It'll sh
 
 	sudo ./kano-debber.py -n snake -bi -v
 
-
-
-## TODO
-
-- remove token

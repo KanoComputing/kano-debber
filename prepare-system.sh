@@ -20,6 +20,4 @@ rm get-pip.py
 sudo pip install --upgrade requests
 sudo pip install --upgrade beautifulsoup4
 
-sudo groupadd kanousers
-sudo usermod -a -G kanousers $USER
 
