@@ -3,12 +3,12 @@ kano-debber
 
 Small tool for the creation of deb packages from Kano GitHub repos.
 
-**Note**: you are only supposed to run this on [Debian based systems](https://github.com/KanoComputing/kano-debber/wiki/Setting-up-a-dev-environment-on-a-Debian-based-system-%28Kano-DevBox-alternative%29) and in [Kano DevBox](https://github.com/KanoComputing/kano-debber/wiki/Kano-DevBox)
+**Note**: you are only supposed to run this on [Debian based systems](https://github.com/KanoComputing/kano-debber/wiki/Debian-based-system) and in [Kano DevBox](https://github.com/KanoComputing/kano-debber/wiki/Kano-DevBox)
 
 ## Dev environments
 
 * [Kano DevBox](https://github.com/KanoComputing/kano-debber/wiki/Kano-DevBox)
-* [Debian based systems](https://github.com/KanoComputing/kano-debber/wiki/Setting-up-a-dev-environment-on-a-Debian-based-system-%28Kano-DevBox-alternative%29)
+* [Debian based systems](https://github.com/KanoComputing/kano-debber/wiki/Debian-based-system)
 
 ## Installation
 
