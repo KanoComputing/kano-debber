@@ -5,6 +5,11 @@ Small tool for the creation of deb packages from Kano GitHub repos.
 
 **Note**: you are only supposed to run this on Debian based systems and in Kano-Devbox
 
+## Dev environments
+
+* [Kano DevBox](https://github.com/KanoComputing/kano-debber/wiki/Kano-DevBox)
+* [Debian based system](https://github.com/KanoComputing/kano-debber/wiki/Setting-up-a-dev-environment-on-a-Debian-based-system-%28Kano-DevBox-alternative%29)
+
 ## Installation
 
 Download and extract the latest version
