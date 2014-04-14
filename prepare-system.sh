@@ -6,7 +6,7 @@
 
 # prepare package building
 sudo apt-get -y --no-install-recommends install build-essential curl \
-    debhelper devscripts fping gdebi libwxbase2.8-dev libwxgtk2.8-dev python \
+    debhelper devscripts fakeroot fping gdebi libwxbase2.8-dev libwxgtk2.8-dev python \
     python-dev python-gtk2 python-pygame python-webkit rxvt-unicode-256color \
     udhcpc wx2.8-headers zenity
 
