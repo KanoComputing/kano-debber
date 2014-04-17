@@ -8,12 +8,13 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 
-import utils as u
+from utils import get_user, run_cmd, delete_file
+
 
 urls = ['http://dev.kano.me/archive/pool/main/k/kano-toolset',
         'http://dev.kano.me/archive/pool/main/k/kano-profile']
 
-if u.get_user() != 'root':
+if get_user() != 'root':
     sys.exit('Need to be root!')
 
 for ur in urls:
@@ -23,7 +24,7 @@ for ur in urls:
     print url
 
     cmd = 'curl -L -v -o tmp.deb {url}'.format(url=url)
-    _, e, _ = u.run_cmd(cmd)
+    _, e, _ = run_cmd(cmd)
     if '< HTTP/1.1 200 OK' in e:
         print 'download OK'
     else:
@@ -31,14 +32,14 @@ for ur in urls:
         sys.exit('Problem with download')
 
     cmd = 'gdebi tmp.deb -n -q -o APT::Install-Recommends=0 -o APT::Install-Suggests=0'
-    o, e, rc = u.run_cmd(cmd)
+    o, e, rc = run_cmd(cmd)
     if rc == 0:
         print 'install OK'
     else:
         print o, e, rc
         sys.exit('Problem with gdebi')
 
-u.deletefile('tmp.deb')
+delete_file('tmp.deb')
 
 
 
