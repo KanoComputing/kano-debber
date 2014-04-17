@@ -9,11 +9,12 @@ import sys
 import argparse
 from collections import OrderedDict
 
-import utils as u
+from utils import read_file_contents, read_file_contents_as_lines, uniqify_list, run_cmd, \
+    delete_dir, ensure_dir, delete_file, get_user, write_file_contents
 
 
 def parse_repos():
-    lines = u.read_file_contents_as_lines('repos')
+    lines = read_file_contents_as_lines('repos')
     if not lines:
         sys.exit('error with repos file')
 
@@ -39,6 +40,42 @@ def parse_repos():
 
             data.setdefault(section, list()).append((repo, branch))
     return data
+
+
+def prepare_build(dir_path):
+    control_file = os.path.join(dir_path, 'debian/control')
+    rules_file = os.path.join(dir_path, 'debian/rules')
+    install_file = os.path.join(dir_path, 'debian/install')
+
+    make_file = os.path.join(dir_path, 'Makefile')
+
+    if not os.path.exists(control_file) or not os.path.exists(rules_file):
+        return
+
+    remove_deps = ['libraspberrypi-dev']
+    remove_installs = ['eglsaver']
+
+    control_file_str = read_file_contents(control_file)
+    for dep in remove_deps:
+        control_file_str = control_file_str.replace(dep + ',', '')
+    write_file_contents(control_file, control_file_str)
+
+    # custom build target
+    if os.path.exists(make_file):
+        make_file_str = read_file_contents(make_file)
+        if 'kano-debber:' in make_file_str:
+            rules_file_str = read_file_contents(rules_file)
+
+            insert_start = '#!/usr/bin/make -f\n'
+            insert_str = 'override_dh_auto_build:\n\tdh_auto_build -- kano-debber\n'
+
+            rules_file_str = rules_file_str.replace(insert_start, insert_start + insert_str)
+            write_file_contents(rules_file, rules_file_str)
+
+    install_lines = read_file_contents_as_lines(install_file)
+    for remove_install in remove_installs:
+        install_lines = [l for l in install_lines if remove_install not in l]
+    write_file_contents(install_file, '\n'.join(install_lines))
 
 
 # parse repos
@@ -87,7 +124,7 @@ if not repos_selected:
     sys.exit('No repo selected, run -h for help')
 
 # uniqify repos_selected
-repos_selected = u.uniqify_list(repos_selected)
+repos_selected = uniqify_list(repos_selected)
 
 print 'Selected repos:'
 for r in repos_selected:
@@ -98,16 +135,16 @@ if not (args.down or args.build or args.install):
 
 
 # checking packages are present
-_, _, rc_curl = u.run_cmd('which curl')
-_, _, rc_debuild = u.run_cmd('which debuild')
-_, _, rc_gdebi = u.run_cmd('which gdebi')
+_, _, rc_curl = run_cmd('which curl')
+_, _, rc_debuild = run_cmd('which debuild')
+_, _, rc_gdebi = run_cmd('which gdebi')
 
 if rc_curl or rc_debuild or rc_gdebi:
     sys.exit('Run prepare_system.sh first')
 
 # start
 root_dir = os.getcwd()
-token = u.read_file_contents('token')
+token = read_file_contents('token')
 github = 'https://api.github.com/repos/KanoComputing/{}/tarball/{}'
 
 
@@ -121,15 +158,15 @@ for name, branch in repos_selected:
     if args.down:
         print 'Downloading {} ...'.format(dir_str)
 
-        u.deletedir(dir_path)
-        u.ensuredir(dir_path)
+        delete_dir(dir_path)
+        ensure_dir(dir_path)
         os.chdir(dir_path)
 
         if not token:
             cmd = 'curl -L -v -o tmp.tgz {url}'.format(url=url)
         else:
             cmd = 'curl -H "Authorization: token {token}" -L -v -o tmp.tgz {url}'.format(token=token, url=url)
-        _, e, _ = u.run_cmd(cmd)
+        _, e, _ = run_cmd(cmd)
 
         if args.verbose:
             print e
@@ -143,9 +180,9 @@ for name, branch in repos_selected:
             sys.exit(msg)
 
         cmd = 'tar --strip-components 1 --show-transformed-names -xzvf tmp.tgz'
-        u.run_cmd(cmd)
+        run_cmd(cmd)
 
-        u.deletefile('tmp.tgz')
+        delete_file('tmp.tgz')
 
     if args.build:
         print 'Building {} ...'.format(dir_str)
@@ -161,12 +198,16 @@ for name, branch in repos_selected:
             continue
 
         # checking root
-        if u.get_user() != 'root':
+        if get_user() != 'root':
             sys.exit('Need to be root to build packages!')
 
+        # preparing build for kano-debber
+        prepare_build(dir_path)
+
+        # do the build
         os.chdir(dir_path)
         cmd = 'debuild -i -us -uc -b'
-        o, e, rc = u.run_cmd(cmd)
+        o, e, rc = run_cmd(cmd)
         if args.verbose:
             print o
         if rc == 0:
@@ -192,7 +233,7 @@ for name, branch in repos_selected:
 
     if args.install:
         print 'Installing {} ...'.format(dir_str)
-        if u.get_user() != 'root':
+        if get_user() != 'root':
             sys.exit('Need to be root to install packages!')
 
         success = True
@@ -206,7 +247,7 @@ for name, branch in repos_selected:
                 print 'using .deb file: {}'.format(debfile)
 
             cmd = 'gdebi {} -n -q -o APT::Install-Recommends=0 -o APT::Install-Suggests=0'.format(debfile_path)
-            o, e, rc = u.run_cmd(cmd)
+            o, e, rc = run_cmd(cmd)
             if args.verbose:
                 print o
 
