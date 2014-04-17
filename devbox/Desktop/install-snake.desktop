@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Install snake
+Exec=lxterminal -e "sudo /home/user/install-snake.sh"
+Icon=/usr/share/icons/kano/snake.png
+Type=Application

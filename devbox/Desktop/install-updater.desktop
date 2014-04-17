@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Install updater
+Exec=lxterminal -e "sudo /home/user/install-updater.sh"
+Icon=/usr/share/icons/kano/updater.png
+Type=Application

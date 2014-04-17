@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Install kdesk
+Exec=lxterminal -e "sudo /home/user/install-kdesk.sh"
+Icon=/usr/share/icons/gnome/32x32/apps/krfb.png
+Type=Application

@@ -12,6 +12,8 @@ sudo ./kano-debber.py -n kdesk -dbi
 
 sudo chown -R user:user /home/user
 
-read -p "Install completed, press any key to continue..."
-sudo invoke-rc.d lightdm restart
+read -p "Install completed.
+To change the desktop manager, we need to restart DevBox now!
+Press any key to continue..."
+sudo reboot
 
