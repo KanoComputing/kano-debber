@@ -11,5 +11,5 @@ sudo ./prepare-deb.py
 sudo ./kano-debber.py -n kdesk -dbi
 
 read -p "Install completed, press any key to continue..."
-
+sudo invoke-rc.d lightdm restart
 
