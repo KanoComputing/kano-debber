@@ -1,3 +1,6 @@
+[tools]
+kdesk master
+
 [apps]
 make-snake master
 kano-updater master
