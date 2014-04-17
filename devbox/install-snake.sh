@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # install kano-debber
+cd ~
 ./install-kano-debber.sh
 cd kano-debber
 

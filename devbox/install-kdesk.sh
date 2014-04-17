@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # install kano-debber
+cd ~
 ./install-kano-debber.sh
 cd kano-debber
 
@@ -11,5 +12,5 @@ sudo ./prepare-deb.py
 sudo ./kano-debber.py -n kdesk -dbi
 
 read -p "Install completed, press any key to continue..."
-sudo invoke-rc.d lightdm restart
+sudo killall pcmanfm
 
