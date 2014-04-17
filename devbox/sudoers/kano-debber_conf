@@ -1,0 +1,4 @@
+%sudo   ALL=(root) NOPASSWD: /home/user/install-snake.sh
+%sudo   ALL=(root) NOPASSWD: /home/user/install-updater.sh
+%sudo   ALL=(root) NOPASSWD: /home/user/install-kdesk.sh
+
