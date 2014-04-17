@@ -73,9 +73,10 @@ def prepare_build(dir_path):
             write_file_contents(rules_file, rules_file_str)
 
     install_lines = read_file_contents_as_lines(install_file)
-    for remove_install in remove_installs:
-        install_lines = [l for l in install_lines if remove_install not in l]
-    write_file_contents(install_file, '\n'.join(install_lines))
+    if install_lines:
+        for remove_install in remove_installs:
+            install_lines = [l for l in install_lines if remove_install not in l]
+        write_file_contents(install_file, '\n'.join(install_lines))
 
 
 # parse repos
