@@ -13,5 +13,5 @@ sudo ./kano-debber.py -n kdesk -dbi
 sudo chown -R user:user /home/user
 
 read -p "Install completed, press any key to continue..."
-sudo killall pcmanfm
+sudo invoke-rc.d lightdm restart
 
