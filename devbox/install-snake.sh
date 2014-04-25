@@ -4,6 +4,9 @@
 /home/user/install-kano-debber.sh
 cd /home/user/kano-debber
 
+# prepare system
+sudo ./prepare-system.sh
+
 # install compiled debs from repo
 sudo ./prepare-deb.py
 
