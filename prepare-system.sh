@@ -18,7 +18,5 @@ python get-pip.py
 rm get-pip.py
 
 # install python modules
-sudo pip install --upgrade requests
-sudo pip install --upgrade beautifulsoup4
-sudo pip install --upgrade pam
+sudo pip install --upgrade requests beautifulsoup4 pam python-slugify
 
