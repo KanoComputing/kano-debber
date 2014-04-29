@@ -11,7 +11,7 @@ sudo ./prepare-system.sh
 sudo ./prepare-deb.py
 
 # download, build and install updater
-sudo ./kano-debber.py -n updater -dbi
+sudo ./kano-debber.py -g base -n updater -dbi
 
 sudo chown -R user:user /home/user
 

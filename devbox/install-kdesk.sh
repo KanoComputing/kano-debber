@@ -11,7 +11,7 @@ sudo ./prepare-system.sh
 sudo ./prepare-deb.py
 
 # download, build and install kdesk
-sudo ./kano-debber.py -n kdesk -dbi
+sudo ./kano-debber.py -g base -n kdesk -dbi
 
 sudo chown -R user:user /home/user
 

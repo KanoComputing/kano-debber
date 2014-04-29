@@ -11,7 +11,7 @@ sudo ./prepare-system.sh
 sudo ./prepare-deb.py
 
 # download, build and install snake
-sudo ./kano-debber.py -n snake -dbi
+sudo ./kano-debber.py -g base -n snake -dbi
 
 sudo chown -R user:user /home/user
 
