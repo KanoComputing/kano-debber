@@ -9,7 +9,8 @@ sudo apt-get -y --no-install-recommends install build-essential curl \
     debhelper devscripts fakeroot fping gdebi libwxbase2.8-dev libwxgtk2.8-dev openjdk-7-jre \
     python python-dev python-gtk2 python-pygame python-webkit rxvt-unicode-256color \
     udhcpc wx2.8-headers zenity  libx11-dev libxft-dev libimlib2-dev \
-    libstartup-notification0-dev libao-dev libmpg123-dev libxss-dev git
+    libstartup-notification0-dev libao-dev libmpg123-dev libxss-dev git \
+    libgtk2.0-dev libmenu-cache1-dev libfm-dev
 
 # prepare python
 sudo apt-get -y purge python-setuptools python-virtualenv python-pip
