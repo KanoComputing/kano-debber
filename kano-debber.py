@@ -52,12 +52,12 @@ def prepare_build(dir_path):
     if not os.path.exists(control_file) or not os.path.exists(rules_file):
         return
 
-    remove_deps = ['libraspberrypi-dev']
+    remove_deps = ['libraspberrypi-dev', 'openbox (>=3.5.2-4~kano.1)', 'chromium']
     remove_installs = ['eglsaver']
 
     control_file_str = read_file_contents(control_file)
     for dep in remove_deps:
-        control_file_str = control_file_str.replace(dep + ',', '')
+        control_file_str = control_file_str.replace(dep + ',', '').replace(dep, '')
     write_file_contents(control_file, control_file_str)
 
     # custom build target
