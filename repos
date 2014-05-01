@@ -3,6 +3,7 @@ kano-fonts master
 
 [tools]
 kdesk master
+kano-settings master
 
 [apps]
 make-snake master
