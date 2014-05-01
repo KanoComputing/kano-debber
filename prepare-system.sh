@@ -10,7 +10,7 @@ sudo apt-get -y --no-install-recommends install build-essential curl \
     python python-dev python-gtk2 python-pygame python-webkit rxvt-unicode-256color \
     udhcpc wx2.8-headers zenity  libx11-dev libxft-dev libimlib2-dev \
     libstartup-notification0-dev libao-dev libmpg123-dev libxss-dev git \
-    libgtk2.0-dev libmenu-cache1-dev libfm-dev
+    libgtk2.0-dev libmenu-cache1-dev libfm-dev vlc
 
 # prepare python
 sudo apt-get -y purge python-setuptools python-virtualenv python-pip
@@ -19,5 +19,4 @@ python get-pip.py
 rm get-pip.py
 
 # install python modules
-sudo pip install --upgrade requests beautifulsoup4 pam python-slugify
-
+sudo pip install --upgrade requests beautifulsoup4 pam python-slugify youtube_dl

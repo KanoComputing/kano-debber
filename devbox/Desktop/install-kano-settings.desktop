@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Install Kano Settings
+Exec=lxterminal -e "sudo /home/user/install-kano-settings.sh"
+Icon=/usr/share/icons/kano/kano-settings.png
+Type=Application
