@@ -1,10 +1,26 @@
 [base]
+kano-toolset master
+Kano-Profile master
 kano-fonts master
 
 [tools]
+kano-themes master
+kano-feedback master
+kanux-utils kano-unlocker
+#kanux-utils kano-vnc
+
+[desktop]
 kdesk master
-kano-settings master
+kanux-utils lxmenu-data
+kano-desktop master
 
 [apps]
 make-snake master
 kano-updater master
+kano-video master
+kano-settings master
+
+[blocks]
+kano-blocks master
+make-pong master
+make-minecraft master
