@@ -12,6 +12,8 @@ Small tool for the creation of deb packages from Kano GitHub repos.
 
 ## Installation
 
+DO THESE COMMANDS IN A TERMINAL IN VIRTUALBOX!
+
 Download and extract the latest version
 
     mkdir -p ~/kano-debber && cd ~/kano-debber
